@@ -7,6 +7,27 @@ require 'nokogiri'
 require 'rss'
 require 'open-uri'
 
+class Resolution
+    attr_accessor :x, :y 
+    def initialize(x, y)
+        @x = x
+        @y = y
+    end
+    
+    def self.string(s)
+        if s.include?('x')
+            x, y = s.split('x')
+        else
+            x, y = s.split("\u{00D7}")
+        end
+        new(Integer(x),Integer(y))
+    end
+    
+    def to_s
+        "#{@x} x #{@y}"
+    end
+end
+
 def get_size
     #Mac Only for now...
     #TODO: Cache this information
@@ -15,13 +36,9 @@ def get_size
     if displays.length > 1
         raise "Not dealing with multiple displays. Cowardly quitting..."
     end
-    displays[0]["spdisplays_resolution"].split('x').map {|x| x.strip.to_i}
-    #little tricks from FP-land
+    Resolution.string(displays[0]["spdisplays_resolution"])
 end
 
-def undopretty resolution
-    resolution.split("\u{00D7}") #Really annoying unicode x
-end
 
 def foxisblack
     #FoxIsBlack Wallpaper specific code
