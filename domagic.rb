@@ -46,10 +46,12 @@ def foxisblack
     feed = RSS::Parser.parse(open(url))
     feed.items.each do |item|
         h = Nokogiri::HTML(item.content_encoded)
-        Hash[h.css('li a').map {|x| [undopretty(x.text), x]} ]
+        #no ipads, iphones or iphone5s.
+        Hash[h.css('li a').select {|x| ! x.text.include?('i')}
+            .map {|x| [Resolution.string(x.text), x]}]
     end
 end
 
 
 
-puts get_size
+puts get_size, foxisblack
