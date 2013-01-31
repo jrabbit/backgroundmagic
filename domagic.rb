@@ -1,7 +1,14 @@
+#require 'pry'
+
 require "rubygems"
 require "bundler/setup"
 
-require 'plist'
+if !defined?(MACRUBY_VERSION) then
+    require 'plist'
+else
+    framework 'Appkit'
+end
+
 require 'nokogiri'
 
 require 'rss'
@@ -28,8 +35,15 @@ class Resolution
     end
 end
 
-def get_size
+#Macruby!
+def Mac_get_size
+    screen = NSScreen.mainScreen.frame
+    Resolution(screen.size.width, screen.size.height)
+end
+
+def get_size_hack
     #Mac Only for now...
+    #Depricated.
     #TODO: Cache this information
     sysinfo = `system_profiler -xml SPDisplaysDataType`
     displays = Plist::parse_xml(sysinfo)[0]['_items'][0]['spdisplays_ndrvs']
@@ -39,7 +53,13 @@ def get_size
     Resolution.string(displays[0]["spdisplays_resolution"])
 end
 
-
+def get_size
+    if !defined?(MACRUBY_VERSION) then
+        get_size_hack
+    else
+        Mac_get_size
+end
+    
 def foxisblack
     #FoxIsBlack Wallpaper specific code
     url = "http://thefoxisblack.com/category/the-desktop-wallpaper-project/feed/"

@@ -1,4 +1,4 @@
 source :rubygems
 
-gem "plist"
+gem "plist" if defined?(MACRUBY_VERSION)
 gem "nokogiri"
